@@ -3,6 +3,7 @@
 #include "Layer.h"
 #include "Player.h"
 #include "Audio.h" 
+#include "Puerta.h"
 
 #include "Background.h"
 #include "Enemy.h"
@@ -11,6 +12,7 @@
 #include "Tile.h"
 #include "Space.h"
 #include <list>
+#include "Recolectable.h"
 
 #include "Pad.h"
 #include <fstream> // Leer ficheros
@@ -38,15 +40,19 @@ public:
 	Audio* audioBackground;
 	Text* textPoints;
 	Text* textLifes;
+	Text* textRecolectables;
 	int points;
 	int lifes;
+	int recolectable;
 	Player* player;
 	Background* background;
 	Actor* backgroundPoints;
 	Actor* backgroundLifes;
+	Actor* backgroundRecolectables;
 	bool controlShoot = false;
 	int controlMoveY = 0;
 	int controlMoveX = 0;
+	void teleportPlayer(int x, int y);
 	Tile* cup;
 	//Movidas pal ratón
 	// Elementos de interfaz
@@ -56,8 +62,11 @@ public:
 	Actor* buttonShoot;
 	//---------------
 
+	list<Recolectable*> recolectables;
 	list<Enemy*> enemies;
 	list<Projectile*> projectiles;
+	list<Puerta*> puertas;
+	
 
 };
 

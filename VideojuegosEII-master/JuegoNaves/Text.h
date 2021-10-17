@@ -6,7 +6,7 @@ class Text
 {
 public:
 	Text(string content, float x, float y, Game* game);
-	void draw();
+	void draw(int r, int g, int b);
 	string content; // texto
 	int x;
 	int y;

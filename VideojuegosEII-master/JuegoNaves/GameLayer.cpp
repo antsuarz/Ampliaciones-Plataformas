@@ -24,6 +24,8 @@ void GameLayer::init() {
 	textPoints->content = to_string(points);
 	textLifes = new Text("0", WIDTH * 0.13, HEIGHT * 0.1, game);
 	textLifes->content = to_string(lifes);
+	textRecolectables = new Text("0", WIDTH * 0.75, HEIGHT * 0.05, game);
+	textRecolectables->content =  to_string(recolectable);
 
 	background = new Background("res/fondo_2.png", WIDTH * 0.5, HEIGHT * 0.5,-1, game);
 	//Laposición es relativa a la pantalla, en este caso el 85% del aancho y el 5% del alto
@@ -31,7 +33,11 @@ void GameLayer::init() {
 		WIDTH * 0.85, HEIGHT * 0.05, 24, 24, game);
 	backgroundLifes= new Actor("res/icono_vidas.png",
 		WIDTH *0.07 , HEIGHT * 0.1 ,40, 40, game);
+	backgroundRecolectables = new Actor("res/icono_recolectable.png",
+		WIDTH * 0.65, HEIGHT * 0.07, 40, 40, game);
 
+	puertas.clear();
+	recolectables.clear();
 	projectiles.clear(); // Vaciar por si reiniciamos el juego
 	enemies.clear(); // Vaciar por si reiniciamos el juego
 
@@ -186,6 +192,10 @@ void GameLayer::update() {
 		enemy->update();
 	}
 
+	for (auto const& r : recolectables) {
+		r->update();
+	}
+
 	// Colisiones
 	for (auto const& enemy : enemies) {
 		if (player->isOverlap(enemy) && (enemy -> state != States::DYING && enemy->state != States::DEAD)) {
@@ -199,10 +209,20 @@ void GameLayer::update() {
 		}
 	}
 
+
 	for (auto const& projectile : projectiles) {
 		projectile->update();
 	}
 
+	for (auto const& rec : recolectables) {
+		if (player->isOverlap(rec)) {
+			recolectable += 1;
+			recolectables.remove(rec);
+			draw();
+			textRecolectables->content = to_string(recolectable);
+			break;
+		}
+	}
 	// Colisiones , Enemy - Projectile
 
 	list<Enemy*> deleteEnemies;
@@ -221,7 +241,14 @@ void GameLayer::update() {
 			}
 		}
 	}
-
+	for (auto const& p : puertas) {
+		if (p->isOverlap(player)) {
+			for(auto const& p2 : puertas)
+				if (p2->ident == p -> ident && p2-> x != p-> x) {
+					teleportPlayer(p2->x, p2->y);
+				}
+		}
+	}
 	for (auto const& enemy : enemies) {
 		for (auto const& projectile : projectiles) {
 			if (enemy->isOverlap(projectile)) {
@@ -286,6 +313,14 @@ void GameLayer::draw() {
 
 	background->draw();
 
+	for (auto const& p : puertas) {
+		p->draw(scrollX);
+	}
+
+	for (auto const& r: recolectables) {
+		r->draw(scrollX);
+	}
+
 	for (auto const& tile : tiles) {
 		tile->draw(scrollX);
 	}
@@ -300,10 +335,12 @@ void GameLayer::draw() {
 	for (auto const& enemy : enemies) {
 		enemy->draw(scrollX);
 	}
-	textPoints->draw();
+	textPoints->draw(255,233,0);
 	backgroundPoints->draw();
-	textLifes->draw();
+	textLifes->draw(0,0,0);
 	backgroundLifes->draw();
+	textRecolectables->draw(255, 0, 0);
+	backgroundRecolectables->draw();
 
 	//Movidas pal ratón
 	// HUD
@@ -357,7 +394,13 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		space->addDynamicActor(cup); // Realmente no hace falta
 		break;
 	}
-
+	case 'R': {
+		Recolectable* r = new Recolectable(x, y, game);
+		r->y = r->y - r->height / 2;
+		recolectables.push_back(r);
+		space->addDynamicActor(r);
+		break;
+	}
 	case 'E': {
 		Enemy* enemy = new Enemy(x, y, game);
 		// modificación para empezar a contar desde el suelo.
@@ -373,6 +416,42 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		space->addDynamicActor(player);
 		break;
 	}
+	case '4': {
+		Puerta* p = new Puerta("res/puerta-4.png",4, x, y, game);
+		p->y = p->y - p->height / 2;
+		puertas.push_back(p);
+		space->addStaticActor(p);
+		break;
+	}
+	case '5': {
+		Puerta* p = new Puerta("res/puerta-5.png", 5, x, y, game);
+		p->y = p->y - p->height / 2;
+		puertas.push_back(p);
+		space->addStaticActor(p);
+		break;
+	}
+	case '7': {
+		Puerta* p = new Puerta("res/puerta-7.png", 7, x, y, game);
+		p->y = p->y - p->height / 2;
+		puertas.push_back(p);
+		space->addStaticActor(p);
+		break;
+	}
+	case '8': {
+		Puerta* p = new Puerta("res/puerta-8.png", 8, x, y, game);
+		p->y = p->y - p->height / 2;
+		puertas.push_back(p);
+		space->addStaticActor(p);
+		break;
+	}
+	case '9': {
+		Puerta* p = new Puerta("res/puerta-9.png", 9, x, y, game);
+		p->y = p->y - p->height / 2;
+		puertas.push_back(p);
+		space->addStaticActor(p);
+		break;
+	}
+	
 	case '#': {
 		Tile* tile = new Tile("res/bloque_tierra.png", x, y, game);
 		// modificación para empezar a contar desde el suelo.
@@ -432,6 +511,22 @@ void GameLayer::mouseToControls(SDL_Event event) {
 		}
 
 	}
+}
+
+void GameLayer::teleportPlayer(int x, int y) {
+	int px = player->x;
+	int py = player->y;
+	//Si el jugador entra por la izquierda de la puerta
+	if (px < x) {
+		player->x = x + 40;// hacer que el jugador aparezca más a la derecha de la puerta para que no esté todo el rato teletransportarse
+		player->y = y;
+	}
+	//Si entra por la izquierda
+	else {
+		player->x = x - 40; // hacer que el jugador aparezca más a la derecha de la puerta para que no esté todo el rato teletransportarse
+		player->y = y;
+	}
+	
 }
 
 
