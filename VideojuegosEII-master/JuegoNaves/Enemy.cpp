@@ -1,7 +1,7 @@
 #include "Enemy.h"
 
 Enemy::Enemy(float x, float y, Game* game)
-	: Actor("res/enemigo.png", x, y, 36, 40, game) {
+	: Actor("res/enemigo-caminante.png", x, y, 36, 40, game) {
 	vx = 1;
 	vxIntelligence = -1;
 	vx = vxIntelligence;
@@ -13,7 +13,7 @@ Enemy::Enemy(float x, float y, Game* game)
 	aDying = new Animation("res/enemigo_morir.png", width, height,
 		280, 40, 6, 8, false, game);
 
-	aMoving = new Animation("res/enemigo_movimiento.png", width, height,
+	aMoving = new Animation("res/enemigo_caminando.png", width, height,
 		108, 40, 6, 3, true, game);
 	animation = aMoving;
 

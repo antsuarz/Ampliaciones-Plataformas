@@ -4,10 +4,15 @@ Space::Space(float gravity) {
 	this->gravity = gravity;
 	dynamicActors.clear();
 	staticActors.clear();
+    noGravityActors.clear();
 }
 
 void Space::addDynamicActor(Actor* actor) {
 	dynamicActors.push_back(actor);
+}
+
+void Space::addNoGravityActor(Actor* actor) {
+    noGravityActors.push_back(actor);
 }
 void Space::addStaticActor(Actor* actor) {
 	staticActors.push_back(actor);
@@ -16,7 +21,9 @@ void Space::addStaticActor(Actor* actor) {
 void Space::removeDynamicActor(Actor* actor) {
 	dynamicActors.remove(actor);
 }
-
+void Space::removeNoGravityActor(Actor* actor) {
+    noGravityActors.remove(actor);
+}
 void Space::removeStaticActor(Actor* actor) {
 	staticActors.remove(actor);
 }
@@ -39,8 +46,8 @@ void Space::update() {
         updateMoveDown(actor);
 
 	}
-
 }
+
 void Space::updateMoveRight(Actor* dynamicAct) {
     if (dynamicAct->vx > 0) {
         int possibleMovement = dynamicAct->vx;

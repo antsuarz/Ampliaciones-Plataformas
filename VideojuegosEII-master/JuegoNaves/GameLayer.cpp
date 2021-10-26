@@ -40,7 +40,7 @@ void GameLayer::init() {
 	recolectables.clear();
 	projectiles.clear(); // Vaciar por si reiniciamos el juego
 	enemies.clear(); // Vaciar por si reiniciamos el juego
-
+	mtiles.clear();
 	loadMap("res/" + to_string(game->currentLevel) + ".txt");
 
 }
@@ -191,6 +191,10 @@ void GameLayer::update() {
 	for (auto const& enemy : enemies) {
 		enemy->update();
 	}
+	for (auto const& tile : mtiles) {
+		tile->update();
+	}
+
 
 	for (auto const& r : recolectables) {
 		r->update();
@@ -209,7 +213,18 @@ void GameLayer::update() {
 		}
 	}
 
-
+	for (auto const& mt : mtiles) {
+		for (auto const& t : tiles)
+			if (mt->isOverlap(t)) {
+				if (t->x > mt->x) {
+					mt->x = mt->x - 5;
+				}
+				else
+					mt->x = mt->x + 5;
+				mt->vx = mt->vx * -1;
+				
+			}
+	}
 	for (auto const& projectile : projectiles) {
 		projectile->update();
 	}
@@ -322,6 +337,9 @@ void GameLayer::draw() {
 	}
 
 	for (auto const& tile : tiles) {
+		tile->draw(scrollX);
+	}
+	for (auto const& tile : mtiles) {
 		tile->draw(scrollX);
 	}
 
@@ -457,6 +475,14 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		// modificación para empezar a contar desde el suelo.
 		tile->y = tile->y - tile->height / 2;
 		tiles.push_back(tile);
+		space->addStaticActor(tile);
+		break;
+	}
+	case 'X': {
+		MovableTile* tile = new MovableTile(x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		tile->y = tile->y - tile->height / 2;
+		mtiles.push_back(tile);
 		space->addStaticActor(tile);
 		break;
 	}

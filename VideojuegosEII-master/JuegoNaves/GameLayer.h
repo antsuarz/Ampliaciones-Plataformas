@@ -10,6 +10,7 @@
 #include "Projectile.h"
 #include "Text.h"
 #include "Tile.h"
+#include "MovableTile.h"
 #include "Space.h"
 #include <list>
 #include "Recolectable.h"
@@ -34,6 +35,7 @@ public:
 	void loadMapObject(char character, float x, float y);
 	int mapWidth;
 	list<Tile*> tiles;
+	list<MovableTile*> mtiles;
 	void calculateScroll();
 	float scrollX;
 	Space* space;
