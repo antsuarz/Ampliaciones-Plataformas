@@ -9,6 +9,7 @@ public:
 	bool isInRender(float scrollX = 0);
 	bool isOverlap(Actor* actor);
 	bool collisionDown;
+	bool draggable = false;
 	SDL_Texture* texture;
 	int x;
 	int y;

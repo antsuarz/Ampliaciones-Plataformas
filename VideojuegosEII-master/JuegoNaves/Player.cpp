@@ -3,6 +3,7 @@
 Player::Player(float x, float y, Game* game)
 	: Actor("res/jugador.png", x, y, 35, 35, game) {
 
+	onAir = false;
 	audioShoot = new Audio("res/efecto_disparo.wav", false);
 
 	aShootingRight = new Animation("res/jugador_disparando_derecha.png",
@@ -25,6 +26,7 @@ Player::Player(float x, float y, Game* game)
 		320, 40, 6, 8, true, game);
 	animation = aIdleRight;
 	orientation = Orientation::RIGHT;
+ 
 }
 
 void Player::update() {

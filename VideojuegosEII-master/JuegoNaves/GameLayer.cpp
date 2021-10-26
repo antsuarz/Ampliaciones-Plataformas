@@ -41,6 +41,7 @@ void GameLayer::init() {
 	projectiles.clear(); // Vaciar por si reiniciamos el juego
 	enemies.clear(); // Vaciar por si reiniciamos el juego
 	mtiles.clear();
+	dtiles.clear();
 	loadMap("res/" + to_string(game->currentLevel) + ".txt");
 
 }
@@ -193,8 +194,7 @@ void GameLayer::update() {
 	}
 	for (auto const& tile : mtiles) {
 		tile->update();
-	}
-
+	} 
 
 	for (auto const& r : recolectables) {
 		r->update();
@@ -224,6 +224,30 @@ void GameLayer::update() {
 				mt->vx = mt->vx * -1;
 				
 			}
+	}
+	 
+	int px = player->x;
+	int py = player->y;
+	for (auto const& dt : dtiles) { 
+		if (player->isOverlap(dt) && px < dt->x && py == dt -> y -1) {
+			dt->x = dt->x + 1;
+		}
+		else if (player->isOverlap(dt) && px > dt->x && py == dt->y - 1){
+			dt->x = dt->x - 1;
+		}
+		else {
+			int count = 0;
+			for (auto const& t : tiles)
+				if (dt->isOverlap(t))
+					count++;
+			for (auto const& t : mtiles)
+				if (dt->isOverlap(t))
+					count++;
+			if (count > 0)
+				count = 0;
+			else
+				dt->y = dt->y + 5;
+		} 
 	}
 	for (auto const& projectile : projectiles) {
 		projectile->update();
@@ -340,6 +364,10 @@ void GameLayer::draw() {
 		tile->draw(scrollX);
 	}
 	for (auto const& tile : mtiles) {
+		tile->draw(scrollX);
+	}
+
+	for (auto const& tile : dtiles) {
 		tile->draw(scrollX);
 	}
 
@@ -474,6 +502,7 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		Tile* tile = new Tile("res/bloque_tierra.png", x, y, game);
 		// modificación para empezar a contar desde el suelo.
 		tile->y = tile->y - tile->height / 2;
+		cout << tile->y;
 		tiles.push_back(tile);
 		space->addStaticActor(tile);
 		break;
@@ -483,6 +512,14 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		// modificación para empezar a contar desde el suelo.
 		tile->y = tile->y - tile->height / 2;
 		mtiles.push_back(tile);
+		space->addStaticActor(tile);
+		break;
+	}
+	case 'Q': {
+		DraggableTile* tile = new DraggableTile(x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		tile->y = tile->y - tile->height / 2;
+		dtiles.push_back(tile);
 		space->addStaticActor(tile);
 		break;
 	}
