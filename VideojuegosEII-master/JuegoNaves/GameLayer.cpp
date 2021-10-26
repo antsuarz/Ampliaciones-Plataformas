@@ -224,6 +224,9 @@ void GameLayer::update() {
 				mt->vx = mt->vx * -1;
 				
 			}
+		if (player->isOverlap(mt) && player->state == States::IDLE) {
+			player->x = mt->x;
+		}
 	}
 	 
 	int px = player->x;

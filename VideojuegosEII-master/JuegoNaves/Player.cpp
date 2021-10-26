@@ -91,9 +91,11 @@ void Player::update() {
 		if (vx == 0) {
 			if (orientation == Orientation::RIGHT) {
 				animation = aIdleRight;
+				state = States::IDLE;
 			}
 			if (orientation == Orientation::LEFT) {
 				animation = aIdleLeft;
+				state = States::IDLE;
 			}
 		}
 	}
