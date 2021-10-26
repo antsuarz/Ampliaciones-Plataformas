@@ -42,6 +42,7 @@ void GameLayer::init() {
 	enemies.clear(); // Vaciar por si reiniciamos el juego
 	mtiles.clear();
 	dtiles.clear();
+	stiles.clear();
 	loadMap("res/" + to_string(game->currentLevel) + ".txt");
 
 }
@@ -93,10 +94,21 @@ void GameLayer::processControls() {
 
 	// Eje Y
 	if (controlMoveY > 0) {
-		
+		for (auto const& stile : stiles) {
+			if (player->isOverlap(stile)) {
+				player->moveY(0);
+			}
+		}
 	}
 	else if (controlMoveY < 0) {
-		player->jump();
+		for (auto const& stile : stiles) {
+			if (player->isOverlap(stile)) {
+				player->moveY(-1);
+			}
+			else
+				player->jump();
+		}
+		
 	}
 	else {
 	}
@@ -195,6 +207,9 @@ void GameLayer::update() {
 	for (auto const& tile : mtiles) {
 		tile->update();
 	} 
+	for (auto const& tile : stiles) {
+		tile->update();
+	}
 
 	for (auto const& r : recolectables) {
 		r->update();
@@ -374,6 +389,10 @@ void GameLayer::draw() {
 		tile->draw(scrollX);
 	}
 
+	for (auto const& tile : stiles) {
+		tile->draw(scrollX);
+	}
+
 	for (auto const& projectile : projectiles) {
 		projectile->draw(scrollX);
 	}
@@ -524,6 +543,14 @@ void GameLayer::loadMapObject(char character, float x, float y)
 		tile->y = tile->y - tile->height / 2;
 		dtiles.push_back(tile);
 		space->addStaticActor(tile);
+		break;
+	}
+	case 'S': {
+		StairsTile* tile = new StairsTile(x, y, game);
+		// modificación para empezar a contar desde el suelo.
+		tile->y = tile->y - tile->height / 2;
+		stiles.push_back(tile);
+		space->addNoGravityActor(tile);
 		break;
 	}
 	}

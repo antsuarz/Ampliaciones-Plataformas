@@ -170,6 +170,7 @@
     <ClCompile Include="Puerta.cpp" />
     <ClCompile Include="Recolectable.cpp" />
     <ClCompile Include="Space.cpp" />
+    <ClCompile Include="StairsTile.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Tile.cpp" />
   </ItemGroup>
@@ -191,6 +192,7 @@
     <ClInclude Include="Puerta.h" />
     <ClInclude Include="Recolectable.h" />
     <ClInclude Include="Space.h" />
+    <ClInclude Include="StairsTile.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Tile.h" />
   </ItemGroup>

@@ -12,6 +12,7 @@
 #include "Tile.h"
 #include "MovableTile.h"
 #include "DraggableTile.h"
+#include "StairsTile.h"
 #include "Space.h"
 #include <list>
 #include "Recolectable.h"
@@ -38,6 +39,7 @@ public:
 	list<Tile*> tiles;
 	list<MovableTile*> mtiles;
 	list < DraggableTile* > dtiles;
+	list < StairsTile* > stiles;
 	void calculateScroll();
 	float scrollX;
 	Space* space;
