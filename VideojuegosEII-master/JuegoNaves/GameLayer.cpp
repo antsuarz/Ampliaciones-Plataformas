@@ -206,10 +206,7 @@ void GameLayer::update() {
 	}
 	for (auto const& tile : mtiles) {
 		tile->update();
-	} 
-	for (auto const& tile : stiles) {
-		tile->update();
-	}
+	}  
 
 	for (auto const& r : recolectables) {
 		r->update();
